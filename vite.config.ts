@@ -7,4 +7,5 @@ export default defineConfig({
   define: {
     global: {},
   },
+  base: "https://tscircuit.github.io/kicad-viewer",
 })
