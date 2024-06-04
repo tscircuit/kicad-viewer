@@ -178,6 +178,12 @@ function App() {
               </li>
             ))}
           </ul>
+          {/* XXX entries hidden */}
+          {searchTerm && (
+            <div className="text-xs text-gray-600 mt-4 text-center">
+              {kicadFiles?.length - filteredData?.length} entries filtered out
+            </div>
+          )}
         </aside>
         <section className="flex-1 p-4">
           {selectedFile && (
@@ -195,6 +201,12 @@ function App() {
                 <div className="flex items-center ml-2">
                   <MdSubdirectoryArrowRight />
                   {selectedFile.split("/")[1]}
+                  <a
+                    className="font-normal text-blue-600 ml-2"
+                    href={`https://gitlab.com/kicad/libraries/kicad-footprints/-/blob/master/${selectedFile}?ref_type=heads`}
+                  >
+                    source
+                  </a>
                 </div>
               </h3>
               {/* <pre className="bg-gray-100 p-4">{fileContent}</pre> */}
