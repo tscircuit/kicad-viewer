@@ -1,7 +1,17 @@
 import { useQuery } from "react-query"
 import { useState, useEffect } from "react"
-import { FaGithub, FaTwitter, FaGitlab } from "react-icons/fa6"
+import {
+  FaGithub,
+  FaTwitter,
+  FaGitlab,
+  FaFolder,
+  FaFolderOpen,
+  FaRegLightbulb,
+} from "react-icons/fa6"
 import { MdSubdirectoryArrowRight } from "react-icons/md"
+import { FaTimes } from "react-icons/fa"
+import { PCBViewer } from "@tscircuit/pcb-viewer"
+import { parseKicadModToTscircuitSoup } from "@tscircuit/kicad-mod-converter"
 
 function App() {
   const {
@@ -17,7 +27,9 @@ function App() {
       if (!response.ok) {
         throw new Error("Network response was not ok")
       }
-      return response.json()
+      return response
+        .json()
+        .then((r) => r.filter((f: string) => f.endsWith(".kicad_mod")))
     },
     {
       cacheTime: 60_000 * 60,
@@ -43,6 +55,18 @@ function App() {
       return response.text()
     },
     {
+      enabled: Boolean(selectedFile),
+      cacheTime: 60_000 * 60,
+      staleTime: 60_000 * 60,
+      refetchOnWindowFocus: false,
+    }
+  )
+
+  const { data: soup, error: soupError } = useQuery(
+    ["fileSoup", fileContent],
+    () => parseKicadModToTscircuitSoup(fileContent as string),
+    {
+      enabled: Boolean(fileContent),
       cacheTime: 60_000 * 60,
       staleTime: 60_000 * 60,
       refetchOnWindowFocus: false,
@@ -116,6 +140,12 @@ function App() {
         </a>
         <div className="flex-grow" />
         <a
+          className="text-blue-600 mr-4 text-xs"
+          href="https://github.com/tscircuit/kicad-viewer/issues"
+        >
+          File Issue
+        </a>
+        <a
           className="flex items-center mr-4 opacity-80"
           href="https://github.com/tscircuit/tscircuit"
         >
@@ -137,29 +167,67 @@ function App() {
             maxHeight: "calc(100vh - 110px)",
           }}
         >
-          <div>
+          <div className="flex gap-2">
             <div
               className="text-blue-600 cursor-pointer"
               onClick={handleViewRandom}
             >
               view random
             </div>
+            <div
+              className="text-blue-600 cursor-pointer"
+              onClick={() => {
+                if (Object.keys(expandedDirs).length === 0) {
+                  const expanded: { [key: string]: boolean } = {}
+                  Object.keys(dirStructure).forEach((dir) => {
+                    expanded[dir] = true
+                  })
+                  setExpandedDirs(expanded)
+                } else {
+                  // collapse all
+                  setExpandedDirs({})
+                }
+              }}
+            >
+              {Object.keys(expandedDirs).length === 0
+                ? `expand all`
+                : `collapse all`}
+            </div>
           </div>
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="mb-4 p-2 border border-gray-300"
-          />
+          <div className="mb-4 relative">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="p-2 border border-gray-300 w-full"
+            />
+            {/* clear search floating X only when there's a search term */}
+            {searchTerm && (
+              <div
+                className="cursor-pointer text-gray-600 absolute p-2 right-1 top-1"
+                onClick={() => setSearchTerm("")}
+              >
+                <FaTimes />
+              </div>
+            )}
+          </div>
           <ul>
             {Object.keys(dirStructure).map((dir) => (
               <li key={dir}>
                 <div
                   onClick={() => toggleDir(dir)}
-                  className="cursor-pointer font-bold"
+                  className="cursor-pointer font-bold flex items-center"
                 >
+                  {expandedDirs[dir] ? (
+                    <FaFolderOpen className="opacity-70 mr-2" />
+                  ) : (
+                    <FaFolder className="opacity-70 mr-2" />
+                  )}
                   {dir}
+                  <span className="ml-2 text-gray-600 font-normal">
+                    ({dirStructure[dir].length})
+                  </span>
                 </div>
                 {(expandedDirs[dir] ||
                   (searchTerm && filteredData?.length < 100)) && (
@@ -188,7 +256,7 @@ function App() {
         <section className="flex-1 p-4">
           {selectedFile && (
             <div>
-              <h3 className="text-md font-semibold flex flex-col">
+              <h3 className="text-md font-semibold flex flex-col mb-4">
                 <div
                   className="opacity-70 cursor-pointer"
                   onClick={() => {
@@ -209,10 +277,30 @@ function App() {
                   </a>
                 </div>
               </h3>
+              {soup && (
+                <div>
+                  <div className="flex text-gray-500 items-center justify-end text-xs">
+                    <FaRegLightbulb />
+                    <div className="mb-1 ml-1">
+                      press "d" on your keyboard to take measurements
+                    </div>
+                  </div>
+                  <PCBViewer
+                    soup={soup}
+                    allowEditing={false}
+                    height={Math.max(800, window.innerHeight - 250)}
+                  />
+                </div>
+              )}
               {/* <pre className="bg-gray-100 p-4">{fileContent}</pre> */}
               {(fileError as any) && (
                 <div className="text-red-600">
                   Error: {(fileError as any).message}
+                </div>
+              )}
+              {(soupError as any) && (
+                <div className="text-red-600">
+                  Error converting kicad_mod: {(soupError as any).message}
                 </div>
               )}
             </div>
