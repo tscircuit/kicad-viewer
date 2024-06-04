@@ -1,4 +1,18 @@
+import { useQuery } from "react-query"
+
 function App() {
+  const { data, error, isLoading } = useQuery("kicadFiles", async () => {
+    const response = await fetch(
+      "https://kicad-mod-cache.tscircuit.com/kicad_files.json"
+    )
+    if (!response.ok) {
+      throw new Error("Network response was not ok")
+    }
+    return response.json()
+  })
+
+  if (isLoading) return <div>Loading...</div>
+  if (error) return <div>Error: {(error as Error).message}</div>
   return (
     <div className="flex flex-col min-h-screen">
       <header className="p-4">
