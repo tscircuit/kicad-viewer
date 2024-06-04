@@ -1,4 +1,5 @@
 import { useQuery } from "react-query"
+import { useState } from "react"
 
 function App() {
   const { data, error, isLoading } = useQuery("kicadFiles", async () => {
@@ -9,6 +10,36 @@ function App() {
       throw new Error("Network response was not ok")
     }
     return response.json()
+  })
+
+  const [searchTerm, setSearchTerm] = useState("")
+  const [expandedDirs, setExpandedDirs] = useState<{ [key: string]: boolean }>(
+    {}
+  )
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value)
+  }
+
+  const toggleDir = (dir: string) => {
+    setExpandedDirs((prev) => ({
+      ...prev,
+      [dir]: !prev[dir],
+    }))
+  }
+
+  const filteredData = data?.filter((filePath: string) =>
+    filePath.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  const dirStructure: { [key: string]: string[] } = {}
+
+  filteredData?.forEach((filePath: string) => {
+    const [dir, file] = filePath.split("/")
+    if (!dirStructure[dir]) {
+      dirStructure[dir] = []
+    }
+    dirStructure[dir].push(file)
   })
 
   if (isLoading) return <div>Loading...</div>
