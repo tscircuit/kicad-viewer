@@ -9,7 +9,7 @@
     "build": "tsc && vite build",
     "lint": "biome lint",
     "preview": "vite preview",
-    "aider": "aider --no-auto-commits --lint-cmd javascript:biome"
+    "aider": "aider --no-auto-commits --no-auto-lint"
   },
   "dependencies": {
     "react": "^18.2.0",
