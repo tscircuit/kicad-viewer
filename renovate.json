@@ -1,12 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
-  ],
+  "extends": ["config:base"],
   "packageRules": [
     {
       "packagePatterns": ["*"],
-      "excludePackagePatterns": ["@tscircuit/*"],
+      "excludePackagePatterns": ["@tscircuit/*", "kicad-mod-converter"],
       "enabled": false
     },
     {

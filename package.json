@@ -12,8 +12,8 @@
     "aider": "aider --no-auto-commits --no-auto-lint"
   },
   "dependencies": {
-    "@tscircuit/kicad-mod-converter": "^0.0.11",
     "@tscircuit/pcb-viewer": "^1.3.10",
+    "kicad-mod-converter": "^0.0.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.2.1",

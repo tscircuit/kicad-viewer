@@ -11,7 +11,7 @@ import {
 import { MdSubdirectoryArrowRight } from "react-icons/md"
 import { FaTimes } from "react-icons/fa"
 import { PCBViewer } from "@tscircuit/pcb-viewer"
-import { parseKicadModToTscircuitSoup } from "@tscircuit/kicad-mod-converter"
+import { parseKicadModToTscircuitSoup } from "kicad-mod-converter"
 
 function App() {
   const {
@@ -22,7 +22,7 @@ function App() {
     "kicadFiles",
     async () => {
       const response = await fetch(
-        "https://kicad-mod-cache.tscircuit.com/kicad_files.json"
+        "https://kicad-mod-cache.tscircuit.com/kicad_files.json",
       )
       if (!response.ok) {
         throw new Error("Network response was not ok")
@@ -35,19 +35,19 @@ function App() {
       cacheTime: 60_000 * 60,
       staleTime: 60_000 * 60,
       refetchOnWindowFocus: false,
-    }
+    },
   )
 
   const [searchTerm, setSearchTerm] = useState("")
   const [expandedDirs, setExpandedDirs] = useState<{ [key: string]: boolean }>(
-    {}
+    {},
   )
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const { data: fileContent, error: fileError } = useQuery(
     ["fileContent", selectedFile],
     async () => {
       const response = await fetch(
-        `https://kicad-mod-cache.tscircuit.com/${selectedFile}`
+        `https://kicad-mod-cache.tscircuit.com/${selectedFile}`,
       )
       if (!response.ok) {
         throw new Error("Network response was not ok")
@@ -59,7 +59,7 @@ function App() {
       cacheTime: 60_000 * 60,
       staleTime: 60_000 * 60,
       refetchOnWindowFocus: false,
-    }
+    },
   )
 
   const { data: soup, error: soupError } = useQuery(
@@ -70,7 +70,7 @@ function App() {
       cacheTime: 60_000 * 60,
       staleTime: 60_000 * 60,
       refetchOnWindowFocus: false,
-    }
+    },
   )
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,7 +107,7 @@ function App() {
   }, [kicadFiles])
 
   const filteredData = kicadFiles?.filter((filePath: string) =>
-    filePath.toLowerCase().includes(searchTerm.toLowerCase())
+    filePath.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
   const dirStructure: { [key: string]: string[] } = {}
