@@ -14,6 +14,9 @@ import { PCBViewer } from "@tscircuit/pcb-viewer"
 import { parseKicadModToTscircuitSoup } from "kicad-mod-converter"
 
 function App() {
+  const serverUrl = window.location.hostname.includes("localhost")
+    ? "/api"
+    : "https://kicad-mod-cache.tscircuit.com"
   const {
     data: kicadFiles,
     error,
@@ -21,9 +24,7 @@ function App() {
   } = useQuery(
     "kicadFiles",
     async () => {
-      const response = await fetch(
-        "https://kicad-mod-cache.tscircuit.com/kicad_files.json",
-      )
+      const response = await fetch(`${serverUrl}/kicad_files.json`)
       if (!response.ok) {
         throw new Error("Network response was not ok")
       }
@@ -46,9 +47,7 @@ function App() {
   const { data: fileContent, error: fileError } = useQuery(
     ["fileContent", selectedFile],
     async () => {
-      const response = await fetch(
-        `https://kicad-mod-cache.tscircuit.com/${selectedFile}`,
-      )
+      const response = await fetch(`${serverUrl}/${selectedFile}`)
       if (!response.ok) {
         throw new Error("Network response was not ok")
       }

@@ -8,4 +8,13 @@ export default defineConfig({
     global: {},
   },
   base: "https://tscircuit.github.io/kicad-viewer",
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://kicad-mod-cache.tscircuit.com/",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
 })

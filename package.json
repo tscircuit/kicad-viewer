@@ -9,13 +9,14 @@
     "build": "tsc && vite build",
     "lint": "biome lint",
     "preview": "vite preview",
+    "update-deps": "npm add @tscircuit/builder @tscircuit/pcb-viewer kicad-mod-converter",
     "aider": "aider --no-auto-commits --no-auto-lint"
   },
   "dependencies": {
     "@tscircuit/builder": "^1.5.116",
     "@tscircuit/pcb-viewer": "^1.3.11",
     "@tscircuit/react-fiber": "^1.1.27",
-    "kicad-mod-converter": "^0.0.21",
+    "kicad-mod-converter": "^0.0.23",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.2.1",
