@@ -159,13 +159,8 @@ function App() {
           KiCad Footprints
         </a>
       </header>
-      <div className="flex flex-1">
-        <aside
-          className="bg-gray-200 overflow-y-scroll max-w-[400px] w-1/3 flex-shrink-0 p-4 text-sm"
-          style={{
-            maxHeight: "calc(100vh - 110px)",
-          }}
-        >
+      <div className="flex flex-1 flex-col md:flex-row">
+        <aside className="bg-gray-200 overflow-y-scroll md:max-w-[400px] md:w-1/3 flex-shrink-0 p-4 text-sm max-h-[30vh] md:max-h-[calc(100vh-110px)]">
           <div className="flex gap-2">
             <div
               className="text-blue-600 cursor-pointer"
