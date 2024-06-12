@@ -160,7 +160,7 @@ function App() {
         </a>
       </header>
       <div className="flex flex-1 flex-col md:flex-row">
-        <aside className="bg-gray-200 overflow-y-scroll md:max-w-[400px] md:w-1/3 flex-shrink-0 p-4 text-sm max-h-[30vh] md:max-h-[calc(100vh-110px)]">
+        <aside className="bg-gray-200 overflow-y-scroll md:max-w-[400px] md:w-1/3 flex-shrink-0 p-4 text-sm max-h-[30vh] md:max-h-[calc(100vh-64px)]">
           <div className="flex gap-2">
             <div
               className="text-blue-600 cursor-pointer"
@@ -272,8 +272,8 @@ function App() {
                 </div>
               </h3>
               {soup && (
-                <div>
-                  <div className="flex text-gray-500 items-center justify-end text-xs">
+                <div className="relative">
+                  <div className="absolute top-[-22px] right-0 flex text-gray-500 items-center justify-end text-xs">
                     <FaRegLightbulb />
                     <div className="mb-1 ml-1">
                       press "d" on your keyboard to take measurements
@@ -282,8 +282,26 @@ function App() {
                   <PCBViewer
                     soup={soup}
                     allowEditing={false}
-                    height={Math.max(800, window.innerHeight - 250)}
+                    height={Math.min(800, window.innerHeight - 200)}
                   />
+                  <footer className="p-4 text-xs text-right flex justify-end items-center gap-1">
+                    made with
+                    <a
+                      className="text-blue-600 inline-flex items-center"
+                      href="https://github.com/tscircuit/tscircuit"
+                    >
+                      <FaGithub className="mt-0.5 mr-0.5" />
+                      <span>tscircuit</span>
+                    </a>
+                    by
+                    <a
+                      className="text-blue-600 inline-flex items-center"
+                      href="https://x.com/seveibar"
+                    >
+                      <FaTwitter className="mt-0.5 mr-0.5" />
+                      <span>seveibar</span>
+                    </a>
+                  </footer>
                 </div>
               )}
               {/* <pre className="bg-gray-100 p-4">{fileContent}</pre> */}
@@ -301,24 +319,6 @@ function App() {
           )}
         </section>
       </div>
-      <footer className="p-4 text-xs text-center flex justify-center items-center gap-1">
-        made with
-        <a
-          className="text-blue-600 inline-flex items-center"
-          href="https://github.com/tscircuit/tscircuit"
-        >
-          <FaGithub className="mt-0.5 mr-0.5" />
-          <span>tscircuit</span>
-        </a>
-        by
-        <a
-          className="text-blue-600 inline-flex items-center"
-          href="https://x.com/seveibar"
-        >
-          <FaTwitter className="mt-0.5 mr-0.5" />
-          <span>seveibar</span>
-        </a>
-      </footer>
     </div>
   )
 }
