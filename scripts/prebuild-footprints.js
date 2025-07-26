@@ -20,7 +20,8 @@ async function main() {
 	const files = await fetchJson(`${BASE_URL}/kicad_files.json`);
 	for (const file of files) {
 		if (!file.endsWith(".kicad_mod")) continue;
-		const content = await fetchText(`${BASE_URL}/${file}`);
+		const content = await fetchText(`${BASE_URL}/${file}`).catch(err => null);
+		if (!content) continue
 		const soup = await parseKicadModToTscircuitSoup(content);
 		const outPath = join(
 			"public",
