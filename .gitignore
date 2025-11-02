@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 .aider*
 .vercel
+
+public/circuit-json
