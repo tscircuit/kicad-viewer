@@ -1,15 +1,15 @@
 {
-	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
-	"extends": ["config:base"],
-	"packageRules": [
-		{
-			"packagePatterns": ["*"],
-			"excludePackagePatterns": ["@tscircuit/*", "kicad-mod-converter"],
-			"enabled": false
-		},
-		{
-			"matchUpdateTypes": ["major", "minor", "patch"],
-			"automerge": true
-		}
-	]
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base"],
+  "packageRules": [
+    {
+      "packagePatterns": ["*"],
+      "excludePackagePatterns": ["@tscircuit/*", "kicad-mod-converter"],
+      "enabled": false
+    },
+    {
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "automerge": true
+    }
+  ]
 }
