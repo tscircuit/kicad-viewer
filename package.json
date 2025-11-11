@@ -3,26 +3,28 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "npm run dev",
+    "start": "bun run dev",
     "dev": "vite",
     "build": "tsc && vite build",
     "vercel-build": "bun run build",
     "lint": "biome lint",
-    "format": "biome format . --write",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
     "preview": "vite preview",
-    "update-deps": "npm add @tscircuit/builder@latest @tscircuit/pcb-viewer@latest kicad-mod-converter@latest",
+    "update-deps": "bun add @tscircuit/builder@latest @tscircuit/pcb-viewer@latest kicad-mod-converter@latest",
     "aider": "aider --no-auto-commits --no-auto-lint"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.7",
     "@tscircuit/pcb-viewer": "^1.11.248",
     "kicad-mod-converter": "^0.0.30",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-icons": "^5.2.1",
-    "react-query": "^3.39.3"
+    "react-icons": "^5.2.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.0",
+    "@types/node": "^24.10.0",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
@@ -31,7 +33,7 @@
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
-    "tscircuit": "^0.0.849",
+    "tscircuit": "^0.0.890",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"
   }

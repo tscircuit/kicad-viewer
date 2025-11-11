@@ -1,5 +1,5 @@
-import { defineConfig } from "vite"
-import react from "@vitejs/plugin-react"
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -7,7 +7,8 @@ export default defineConfig({
   define: {
     global: {},
   },
-  base: "https://tscircuit.github.io/kicad-viewer",
+  // Use "/" for Vercel (default), or override with VITE_BASE_URL env var for GitHub Pages
+  base: process.env.VITE_BASE_URL || "/",
   server: {
     proxy: {
       "/api": {
@@ -17,4 +18,4 @@ export default defineConfig({
       },
     },
   },
-})
+});

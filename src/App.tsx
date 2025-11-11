@@ -1,5 +1,5 @@
-import { useQuery } from "react-query"
-import { useState, useEffect } from "react"
+import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import {
   FaGithub,
   FaTwitter,
@@ -7,119 +7,121 @@ import {
   FaFolder,
   FaFolderOpen,
   FaRegLightbulb,
-} from "react-icons/fa6"
-import { MdSubdirectoryArrowRight } from "react-icons/md"
-import { FaTimes } from "react-icons/fa"
-import { PCBViewer } from "@tscircuit/pcb-viewer"
-import { parseKicadModToTscircuitSoup } from "kicad-mod-converter"
+} from "react-icons/fa6";
+import { MdSubdirectoryArrowRight } from "react-icons/md";
+import { FaTimes } from "react-icons/fa";
+import { PCBViewer } from "@tscircuit/pcb-viewer";
+import { parseKicadModToTscircuitSoup } from "kicad-mod-converter";
 
 function App() {
-  const serverUrl = window.location.hostname.includes("localhost")
+  // Use /api for localhost and Vercel deployments (which proxy to the external API)
+  // Vercel deployments will have the API proxied via vercel.json rewrites
+  // For other deployments, use the direct URL or set VITE_USE_API_PROXY=true
+  const useApiProxy =
+    import.meta.env.VITE_USE_API_PROXY === "true" ||
+    window.location.hostname === "localhost" ||
+    window.location.hostname.includes("localhost") ||
+    window.location.hostname.endsWith(".vercel.app");
+  const serverUrl = useApiProxy
     ? "/api"
-    : "https://kicad-mod-cache.tscircuit.com"
+    : "https://kicad-mod-cache.tscircuit.com";
   const {
     data: kicadFiles,
     error,
     isLoading: sidebarLoading,
-  } = useQuery(
-    "kicadFiles",
-    async () => {
-      const response = await fetch(`${serverUrl}/kicad_files.json`)
+  } = useQuery({
+    queryKey: ["kicadFiles"],
+    queryFn: async () => {
+      const response = await fetch(`${serverUrl}/kicad_files.json`);
       if (!response.ok) {
-        throw new Error("Network response was not ok")
+        throw new Error("Network response was not ok");
       }
       return response
         .json()
-        .then((r) => r.filter((f: string) => f.endsWith(".kicad_mod")))
+        .then((r) => r.filter((f: string) => f.endsWith(".kicad_mod")));
     },
-    {
-      cacheTime: 60_000 * 60,
-      staleTime: 60_000 * 60,
-      refetchOnWindowFocus: false,
-    },
-  )
+    gcTime: 60_000 * 60,
+    staleTime: 60_000 * 60,
+    refetchOnWindowFocus: false,
+  });
 
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState("");
   const [expandedDirs, setExpandedDirs] = useState<{ [key: string]: boolean }>(
-    {},
-  )
-  const [selectedFile, setSelectedFile] = useState<string | null>(null)
-  const { data: fileContent, error: fileError } = useQuery(
-    ["fileContent", selectedFile],
-    async () => {
-      const response = await fetch(`${serverUrl}/${selectedFile}`)
+    {}
+  );
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const { data: fileContent, error: fileError } = useQuery({
+    queryKey: ["fileContent", selectedFile],
+    queryFn: async () => {
+      const response = await fetch(`${serverUrl}/${selectedFile}`);
       if (!response.ok) {
-        throw new Error("Network response was not ok")
+        throw new Error("Network response was not ok");
       }
-      return response.text()
+      return response.text();
     },
-    {
-      enabled: Boolean(selectedFile),
-      cacheTime: 60_000 * 60,
-      staleTime: 60_000 * 60,
-      refetchOnWindowFocus: false,
-    },
-  )
+    enabled: Boolean(selectedFile),
+    gcTime: 60_000 * 60,
+    staleTime: 60_000 * 60,
+    refetchOnWindowFocus: false,
+  });
 
-  const { data: soup, error: soupError } = useQuery(
-    ["fileSoup", fileContent],
-    () => parseKicadModToTscircuitSoup(fileContent as string),
-    {
-      enabled: Boolean(fileContent),
-      cacheTime: 60_000 * 60,
-      staleTime: 60_000 * 60,
-      refetchOnWindowFocus: false,
-    },
-  )
+  const { data: soup, error: soupError } = useQuery({
+    queryKey: ["fileSoup", fileContent],
+    queryFn: () => parseKicadModToTscircuitSoup(fileContent as string),
+    enabled: Boolean(fileContent),
+    gcTime: 60_000 * 60,
+    staleTime: 60_000 * 60,
+    refetchOnWindowFocus: false,
+  });
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-  }
+    setSearchTerm(e.target.value);
+  };
 
   const toggleDir = (dir: string) => {
     setExpandedDirs((prev) => ({
       ...prev,
       [dir]: !prev[dir],
-    }))
-  }
+    }));
+  };
 
   const handleFileSelect = async (filePath: string) => {
-    setSelectedFile(filePath)
-    window.location.hash = filePath
-  }
+    setSelectedFile(filePath);
+    window.location.hash = filePath;
+  };
 
   const handleViewRandom = () => {
     if (kicadFiles && kicadFiles.length > 0) {
       const randomFile =
-        kicadFiles[Math.floor(Math.random() * kicadFiles.length)]
-      handleFileSelect(randomFile)
+        kicadFiles[Math.floor(Math.random() * kicadFiles.length)];
+      handleFileSelect(randomFile);
     }
-  }
+  };
 
   useEffect(() => {
-    const hash = window.location.hash.substring(1)
+    const hash = window.location.hash.substring(1);
     if (hash) {
-      handleFileSelect(hash)
+      handleFileSelect(hash);
     } else {
-      handleViewRandom()
+      handleViewRandom();
     }
-  }, [kicadFiles])
+  }, [kicadFiles]);
 
   const filteredData = kicadFiles?.filter((filePath: string) =>
-    filePath.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+    filePath.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const dirStructure: { [key: string]: string[] } = {}
+  const dirStructure: { [key: string]: string[] } = {};
 
   filteredData?.forEach((filePath: string) => {
-    const [dir, file] = filePath.split("/")
+    const [dir, file] = filePath.split("/");
     if (!dirStructure[dir]) {
-      dirStructure[dir] = []
+      dirStructure[dir] = [];
     }
-    dirStructure[dir].push(file)
-  })
+    dirStructure[dir].push(file);
+  });
 
-  if (error) return <div>Error: {(error as Error).message}</div>
+  if (error) return <div>Error: {(error as Error).message}</div>;
   return (
     <div className="flex flex-col min-h-screen">
       <header className="p-4 text-sm flex border-b-gray-200 border-b items-center">
@@ -172,14 +174,14 @@ function App() {
               className="text-blue-600 cursor-pointer"
               onClick={() => {
                 if (Object.keys(expandedDirs).length === 0) {
-                  const expanded: { [key: string]: boolean } = {}
+                  const expanded: { [key: string]: boolean } = {};
                   Object.keys(dirStructure).forEach((dir) => {
-                    expanded[dir] = true
-                  })
-                  setExpandedDirs(expanded)
+                    expanded[dir] = true;
+                  });
+                  setExpandedDirs(expanded);
                 } else {
                   // collapse all
-                  setExpandedDirs({})
+                  setExpandedDirs({});
                 }
               }}
             >
@@ -255,7 +257,7 @@ function App() {
                   className="opacity-70 cursor-pointer"
                   onClick={() => {
                     // select the directory in the sidebar
-                    toggleDir(selectedFile.split("/")[0])
+                    toggleDir(selectedFile.split("/")[0]);
                   }}
                 >
                   {selectedFile.split("/")[0]}
@@ -280,7 +282,7 @@ function App() {
                     </div>
                   </div>
                   <PCBViewer
-                    soup={soup}
+                    circuitJson={soup as any}
                     allowEditing={false}
                     height={Math.min(800, window.innerHeight - 200)}
                   />
@@ -320,7 +322,7 @@ function App() {
         </section>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
