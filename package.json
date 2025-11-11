@@ -3,14 +3,14 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"start": "npm run dev",
+		"start": "bun run dev",
 		"dev": "vite",
 		"build": "tsc && vite build",
 		"vercel-build": "bun run build",
 		"lint": "biome lint",
 		"format": "biome format . --write",
 		"preview": "vite preview",
-		"update-deps": "npm add @tscircuit/builder@latest @tscircuit/pcb-viewer@latest kicad-mod-converter@latest",
+		"update-deps": "bun add @tscircuit/builder@latest @tscircuit/pcb-viewer@latest kicad-mod-converter@latest",
 		"aider": "aider --no-auto-commits --no-auto-lint"
 	},
 	"dependencies": {
