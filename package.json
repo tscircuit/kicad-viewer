@@ -8,7 +8,8 @@
 		"build": "tsc && vite build",
 		"vercel-build": "bun run build",
 		"lint": "biome lint",
-		"format": "biome format . --write",
+		"format": "biome format --write .",
+		"format:check": "biome format .",
 		"preview": "vite preview",
 		"update-deps": "bun add @tscircuit/builder@latest @tscircuit/pcb-viewer@latest kicad-mod-converter@latest",
 		"aider": "aider --no-auto-commits --no-auto-lint"
