@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import {
 	FaGithub,
@@ -29,9 +29,9 @@ function App() {
 		data: kicadFiles,
 		error,
 		isLoading: sidebarLoading,
-	} = useQuery(
-		"kicadFiles",
-		async () => {
+	} = useQuery({
+		queryKey: ["kicadFiles"],
+		queryFn: async () => {
 			const response = await fetch(`${serverUrl}/kicad_files.json`);
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -40,45 +40,39 @@ function App() {
 				.json()
 				.then((r) => r.filter((f: string) => f.endsWith(".kicad_mod")));
 		},
-		{
-			cacheTime: 60_000 * 60,
-			staleTime: 60_000 * 60,
-			refetchOnWindowFocus: false,
-		},
-	);
+		gcTime: 60_000 * 60,
+		staleTime: 60_000 * 60,
+		refetchOnWindowFocus: false,
+	});
 
 	const [searchTerm, setSearchTerm] = useState("");
 	const [expandedDirs, setExpandedDirs] = useState<{ [key: string]: boolean }>(
 		{},
 	);
 	const [selectedFile, setSelectedFile] = useState<string | null>(null);
-	const { data: fileContent, error: fileError } = useQuery(
-		["fileContent", selectedFile],
-		async () => {
+	const { data: fileContent, error: fileError } = useQuery({
+		queryKey: ["fileContent", selectedFile],
+		queryFn: async () => {
 			const response = await fetch(`${serverUrl}/${selectedFile}`);
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
 			}
 			return response.text();
 		},
-		{
-			enabled: Boolean(selectedFile),
-			cacheTime: 60_000 * 60,
-			staleTime: 60_000 * 60,
-			refetchOnWindowFocus: false,
-		},
-	);
+		enabled: Boolean(selectedFile),
+		gcTime: 60_000 * 60,
+		staleTime: 60_000 * 60,
+		refetchOnWindowFocus: false,
+	});
 
-	const { data: soup, error: soupError } = useQuery(
-		["fileSoup", fileContent],
-		() => parseKicadModToTscircuitSoup(fileContent as string),
-		{
-			enabled: Boolean(fileContent),
-			cacheTime: 60_000 * 60,
-			staleTime: 60_000 * 60,
-			refetchOnWindowFocus: false,
-		},
-	);
+	const { data: soup, error: soupError } = useQuery({
+		queryKey: ["fileSoup", fileContent],
+		queryFn: () => parseKicadModToTscircuitSoup(fileContent as string),
+		enabled: Boolean(fileContent),
+		gcTime: 60_000 * 60,
+		staleTime: 60_000 * 60,
+		refetchOnWindowFocus: false,
+	});
 
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchTerm(e.target.value);
