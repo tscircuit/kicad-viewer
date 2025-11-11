@@ -14,7 +14,14 @@ import { PCBViewer } from "@tscircuit/pcb-viewer"
 import { parseKicadModToTscircuitSoup } from "kicad-mod-converter"
 
 function App() {
-  const serverUrl = window.location.hostname.includes("localhost")
+  // Use /api for localhost and Vercel deployments (which proxy to the external API)
+  // Vercel deployments will have the API proxied via vercel.json rewrites
+  // For other deployments, use the direct URL or set VITE_USE_API_PROXY=true
+  const useApiProxy = import.meta.env.VITE_USE_API_PROXY === "true" ||
+    window.location.hostname === "localhost" ||
+    window.location.hostname.includes("localhost") ||
+    window.location.hostname.endsWith(".vercel.app")
+  const serverUrl = useApiProxy
     ? "/api"
     : "https://kicad-mod-cache.tscircuit.com"
   const {
