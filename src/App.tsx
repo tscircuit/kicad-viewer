@@ -11,7 +11,7 @@ import {
 import { MdSubdirectoryArrowRight } from "react-icons/md";
 import { FaTimes } from "react-icons/fa";
 import { PCBViewer } from "@tscircuit/pcb-viewer";
-import { parseKicadModToTscircuitSoup } from "kicad-mod-converter";
+import { convertKicadModToCircuitJson } from "./convertKicadModToCircuitJson";
 
 function App() {
   // Use /api for localhost and Vercel deployments (which proxy to the external API)
@@ -65,10 +65,14 @@ function App() {
     refetchOnWindowFocus: false,
   });
 
-  const { data: soup, error: soupError } = useQuery({
-    queryKey: ["fileSoup", fileContent],
-    queryFn: () => parseKicadModToTscircuitSoup(fileContent as string),
-    enabled: Boolean(fileContent),
+  const { data: circuitJson, error: conversionError } = useQuery({
+    queryKey: ["fileCircuitJson", selectedFile, fileContent],
+    queryFn: () =>
+      convertKicadModToCircuitJson(
+        selectedFile as string,
+        fileContent as string
+      ),
+    enabled: Boolean(selectedFile && fileContent),
     gcTime: 60_000 * 60,
     staleTime: 60_000 * 60,
     refetchOnWindowFocus: false,
@@ -273,7 +277,7 @@ function App() {
                   </a>
                 </div>
               </h3>
-              {soup && (
+              {circuitJson && (
                 <div className="relative">
                   <div className="absolute top-[-22px] right-0 flex text-gray-500 items-center justify-end text-xs">
                     <FaRegLightbulb />
@@ -282,7 +286,7 @@ function App() {
                     </div>
                   </div>
                   <PCBViewer
-                    circuitJson={soup as any}
+                    circuitJson={circuitJson as any}
                     allowEditing={false}
                     height={Math.min(800, window.innerHeight - 200)}
                   />
@@ -312,9 +316,9 @@ function App() {
                   Error: {(fileError as any).message}
                 </div>
               )}
-              {(soupError as any) && (
+              {conversionError && (
                 <div className="text-red-600">
-                  Error converting kicad_mod: {(soupError as any).message}
+                  Error converting kicad_mod: {conversionError.message}
                 </div>
               )}
             </div>

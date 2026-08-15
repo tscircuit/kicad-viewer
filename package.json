@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "bun run dev",
+    "test": "bun test",
     "dev": "vite",
     "build": "tsc && vite build",
     "vercel-build": "bun run build",
@@ -11,13 +12,14 @@
     "format": "biome format --write .",
     "format:check": "biome format .",
     "preview": "vite preview",
-    "update-deps": "bun add @tscircuit/builder@latest @tscircuit/pcb-viewer@latest kicad-mod-converter@latest",
+    "update-deps": "bun add @tscircuit/pcb-viewer@latest kicad-to-circuit-json@latest kicadts@latest",
     "aider": "aider --no-auto-commits --no-auto-lint"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.7",
     "@tscircuit/pcb-viewer": "^1.11.248",
-    "kicad-mod-converter": "^0.0.30",
+    "kicad-to-circuit-json": "^0.0.119",
+    "kicadts": "^0.0.53",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-icons": "^5.2.1"

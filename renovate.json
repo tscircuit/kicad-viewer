@@ -4,7 +4,11 @@
   "packageRules": [
     {
       "packagePatterns": ["*"],
-      "excludePackagePatterns": ["@tscircuit/*", "kicad-mod-converter"],
+      "excludePackagePatterns": [
+        "@tscircuit/*",
+        "kicad-to-circuit-json",
+        "kicadts"
+      ],
       "enabled": false
     },
     {
