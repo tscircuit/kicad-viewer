@@ -27,8 +27,7 @@ describe("convertKicadModToCircuitJson", () => {
 
     const pinOne = circuitJson.find(
       (element) =>
-        element.type === "pcb_plated_hole" &&
-        element.port_hints?.includes("1")
+        element.type === "pcb_plated_hole" && element.port_hints?.includes("1")
     );
 
     expect(pinOne).toMatchObject({
