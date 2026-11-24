@@ -18,6 +18,18 @@ const footprintWithRectangularPinOne = `
       (layers "*.Cu" "*.Mask")))
 `;
 
+const footprintWithRotatedOvalNpth = `
+  (footprint "RotatedSlotTest"
+    (version 20240108)
+    (generator pcbnew)
+    (layer "F.Cu")
+    (pad "" np_thru_hole oval
+      (at 1 2 30)
+      (size 1.5 2)
+      (drill oval 1.5 2)
+      (layers "F&B.Cu" "*.Mask")))
+`;
+
 describe("convertKicadModToCircuitJson", () => {
   it("preserves a rectangular through-hole pin 1", () => {
     const circuitJson = convertKicadModToCircuitJson(
@@ -35,6 +47,23 @@ describe("convertKicadModToCircuitJson", () => {
       shape: "circular_hole_with_rect_pad",
       pad_shape: "rect",
       hole_shape: "circle",
+    });
+  });
+
+  it("preserves rotated oval non-plated slots", () => {
+    const circuitJson = convertKicadModToCircuitJson(
+      "RotatedSlotTest.kicad_mod",
+      footprintWithRotatedOvalNpth
+    );
+
+    const slot = circuitJson.find((element) => element.type === "pcb_hole");
+
+    expect(slot).toMatchObject({
+      type: "pcb_hole",
+      hole_shape: "rotated_pill",
+      hole_width: 1.5,
+      hole_height: 2,
+      ccw_rotation: 30,
     });
   });
 });
