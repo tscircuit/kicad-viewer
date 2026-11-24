@@ -17,9 +17,10 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.7",
+    "@tscircuit/circuit-json-util": "0.0.94",
     "@tscircuit/pcb-viewer": "^1.11.248",
-    "kicad-to-circuit-json": "^0.0.119",
-    "kicadts": "^0.0.53",
+    "kicad-to-circuit-json": "0.0.152",
+    "kicadts": "0.0.65",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-icons": "^5.2.1"
